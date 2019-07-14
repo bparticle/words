@@ -1,6 +1,6 @@
 <template>
   <div :style="setPos" class="character" :class="classes" :id="id">
-    {{ rndChar }}
+    {{ char }}
   </div>
 </template>
 
@@ -8,6 +8,14 @@
 export default {
   name: "Character",
   props: {
+    isRandom: {
+      type: Boolean,
+      required: true
+    },
+    character: {
+      type: String,
+      required: false
+    },
     classes: {
       type: Array,
       required: true
@@ -29,9 +37,17 @@ export default {
     elementSize() {
       return this.$store.state.elementSize;
     },
-    rndChar() {
-      var characters = this.$store.state.allCharacters;
-      return characters.charAt(Math.floor(Math.random() * characters.length));
+    characters() {
+      return this.$store.state.allCharacters;
+    },
+    char() {
+      if (this.isRandom) {
+        return this.characters.charAt(
+          Math.floor(Math.random() * this.characters.length)
+        );
+      } else {
+        return this.character;
+      }
     },
     setPos() {
       return {
@@ -46,6 +62,7 @@ export default {
 <style scoped lang="scss">
 .character {
   font-family: paytone-one, sans-serif;
+  text-transform: uppercase;
   position: absolute;
   transition: all 0.3s ease-out;
   font-size: 20px;

@@ -12,5 +12,8 @@ export default {
   setRows(state) {
     state.rows = Math.floor(state.viewportHeight / state.elementSize);
     state.marginTop = (state.viewportHeight % state.elementSize) / 2;
+  },
+  setWord(state, word) {
+    state.word = word;
   }
 };

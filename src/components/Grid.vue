@@ -12,21 +12,25 @@
       name="height"
       v-model="size.height"
     />
-    <button @click="setSize" type="button" name="button">GO</button>
+    <input @keyup.enter="hideWordH" type="text" name="height" v-model="word" />
+    <button @click="setSize" type="button" name="button">SHUFFLE</button>
     <button @click="deleteGrid" type="button" name="button">DELETE</button>
+    <div class="grid-wrapper__word">
+      {{ word }}
+    </div>
     <div class="grid" :class="gridSize" :style="gridStyle" :key="gridKey">
-      <div :style="gridPadding" class="grid-padding">
-        <transition-group name="list-complete" tag="div" mode="out-in">
-          <Character
-            v-for="gridObject in gridObjects"
-            :key="gridObject.rnd"
-            :classes="gridObject.classes"
-            :id="gridObject.elementId"
-            :row="gridObject.row"
-            :column="gridObject.column"
-          />
-        </transition-group>
-      </div>
+      <transition-group name="list-complete" tag="div" mode="out-in">
+        <Character
+          v-for="gridObject in gridObjects"
+          :key="gridObject.rnd"
+          :classes="gridObject.classes"
+          :id="gridObject.elementId"
+          :row="gridObject.row"
+          :column="gridObject.column"
+          :isRandom="gridObject.isRandom"
+          :character="gridObject.character"
+        />
+      </transition-group>
     </div>
   </div>
 </template>
@@ -43,17 +47,25 @@ export default {
     return {
       gridObjects: [],
       gridStyle: {
-        width: 500,
-        height: 500
+        width: 250,
+        height: 250
       },
       size: {
-        width: 500,
-        height: 500
+        width: 250,
+        height: 250
       },
       gridKey: 0
     };
   },
   computed: {
+    word: {
+      get: function() {
+        return this.$store.state.word;
+      },
+      set: function(newValue) {
+        this.$store.commit("setWord", newValue);
+      }
+    },
     gridSize() {
       return "grid--" + this.$store.state.columns;
     },
@@ -74,6 +86,28 @@ export default {
     }
   },
   methods: {
+    hideWordH() {
+      const getAvailable = new Promise(resolve => {
+        var availablePlaces = [];
+        this.gridObjects.forEach(item => {
+          if (
+            item.column <
+            this.$store.state.columns - this.$store.state.word.length
+          ) {
+            availablePlaces.push(this.gridObjects.indexOf(item));
+          }
+        });
+        resolve(availablePlaces);
+      });
+      getAvailable.then(result => {
+        var startPos = result[Math.floor(Math.random() * result.length)];
+        console.log(startPos);
+        for (var i = 0; i < this.$store.state.word.length; i++) {
+          this.gridObjects[startPos + i].isRandom = false;
+          this.gridObjects[startPos + i].character = this.$store.state.word[i];
+        }
+      });
+    },
     setGridStyle() {
       this.gridStyle.width = this.size.width + "px";
       this.gridStyle.height = this.size.height + "px";
@@ -105,6 +139,8 @@ export default {
             rnd:
               Math.floor(100000 + Math.random() * 900000 + i * j) + "-" + i + j,
             column: j,
+            isRandom: true,
+            character: "",
             classes: [
               "character--delay" + Math.floor(Math.random() * 10),
               this.elementSize,
@@ -125,8 +161,14 @@ export default {
 
 <style scoped lang="scss">
 .grid {
-  &-padding {
-    position: relative;
+  position: relative;
+  &-wrapper {
+    &__word {
+      margin: 20px;
+      font-family: paytone-one, sans-serif;
+      text-transform: uppercase;
+      font-size: 20px;
+    }
   }
 
   margin: 50px auto;
