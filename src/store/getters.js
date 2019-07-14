@@ -7,5 +7,8 @@ export default {
   },
   totalElements: state => {
     return state.columns * state.rows;
+  },
+  getGridObjects: state => {
+    return state.gridObjects;
   }
 };

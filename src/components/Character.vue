@@ -35,26 +35,31 @@ export default {
     },
     setPos() {
       return {
-        left: this.column * this.elementSize,
-        top: this.row * this.elementSize
+        left: this.column * this.elementSize + "px",
+        top: this.row * this.elementSize + "px"
       };
     }
-  },
-  mounted() {}
+  }
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .character {
   font-family: paytone-one, sans-serif;
   position: absolute;
+  transition: all 0.3s ease-out;
   font-size: 20px;
 
   @for $i from 20 through 80 {
     &--#{$i} {
       width: #{$i}px;
       height: #{$i}px;
+    }
+  }
+
+  @for $i from 0 through 10 {
+    &--delay#{$i} {
+      transition-delay: #{$i / 20}s;
     }
   }
 }

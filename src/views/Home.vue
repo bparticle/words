@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <Grid />
+    <Grid :size="size" />
   </div>
 </template>
 
@@ -11,6 +11,16 @@ export default {
   name: "home",
   components: {
     Grid
+  },
+  data() {
+    return {
+      size: {
+        width: 500,
+        height: 500
+      }
+    };
   }
 };
 </script>
+
+<style scoped lang="scss"></style>
