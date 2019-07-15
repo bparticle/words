@@ -12,7 +12,7 @@
       name="height"
       v-model="size.height"
     />
-    <input @keyup.enter="hideWordH" type="text" name="height" v-model="word" />
+    <input @keyup.enter="hideWord" type="text" name="height" v-model="word" />
     <button @click="setSize" type="button" name="button">SHUFFLE</button>
     <button @click="deleteGrid" type="button" name="button">DELETE</button>
     <div class="grid-wrapper__word">
@@ -103,7 +103,6 @@ export default {
       }
     },
     hideWordH() {
-      console.log("was here");
       const getAvailable = new Promise(resolve => {
         var availablePlaces = [];
         this.$store.state.gridObjects.forEach(item => {
@@ -116,15 +115,15 @@ export default {
         });
         resolve(availablePlaces);
       });
-      getAvailable
-        .then(result => {
-          var startPos = result[Math.floor(Math.random() * result.length)];
-          console.log(startPos);
-          for (var i = 0; i < this.$store.state.word.length; i++) {
-            const x = this.$store.state.gridObjects[startPos + i].row;
-            const y = this.$store.state.gridObjects[startPos + i].column;
-            const z = this.$store.state.gridObjects[startPos + i].count;
-            this.$store.state.gridObjects[startPos + i] = {
+      getAvailable.then(result => {
+        var startPos = result[Math.floor(Math.random() * result.length)];
+        for (var i = 0; i < this.$store.state.word.length; i++) {
+          const x = this.$store.state.gridObjects[startPos + i].row;
+          const y = this.$store.state.gridObjects[startPos + i].column;
+          const z = this.$store.state.gridObjects[startPos + i].elementNumber;
+          this.$store.commit("replaceGridItem", {
+            index: startPos + i,
+            content: {
               elementNumber: z,
               elementId: x + "-" + y,
               row: x,
@@ -143,11 +142,10 @@ export default {
                 "row-" + x,
                 "index-" + z
               ]
-            };
-          }
-          console.log(this.$store.state.gridObjects[startPos + i]);
-        })
-        .catch(() => console.log("too long for this grid"));
+            }
+          });
+        }
+      });
     },
     hideWordV() {
       const getAvailable = new Promise(resolve => {
@@ -162,19 +160,43 @@ export default {
         });
         resolve(availablePlaces);
       });
-      getAvailable
-        .then(result => {
-          var startPos = result[Math.floor(Math.random() * result.length)];
-          for (var i = 0; i < this.$store.state.word.length; i++) {
-            this.$store.state.gridObjects[
-              startPos + this.$store.state.columns * i
-            ].isRandom = false;
-            this.$store.state.gridObjects[
-              startPos + this.$store.state.columns * i
-            ].character = this.$store.state.word[i];
-          }
-        })
-        .catch(() => console.log("too long for this grid"));
+      getAvailable.then(result => {
+        var startPos = result[Math.floor(Math.random() * result.length)];
+        for (var i = 0; i < this.$store.state.word.length; i++) {
+          const x = this.$store.state.gridObjects[
+            startPos + this.$store.state.columns * i
+          ].row;
+          const y = this.$store.state.gridObjects[
+            startPos + this.$store.state.columns * i
+          ].column;
+          const z = this.$store.state.gridObjects[
+            startPos + this.$store.state.columns * i
+          ].elementNumber;
+          this.$store.commit("replaceGridItem", {
+            index: startPos + this.$store.state.columns * i,
+            content: {
+              elementNumber: z,
+              elementId: x + "-" + y,
+              row: x,
+              column: y,
+              rnd:
+                Math.floor(100000 + Math.random() * 900000 + x * y) +
+                "-" +
+                x +
+                y,
+              isRandom: false,
+              character: this.$store.state.word[i],
+              classes: [
+                "character--delay" + Math.floor(Math.random() * 10),
+                this.elementSize,
+                "col-" + y,
+                "row-" + x,
+                "index-" + z
+              ]
+            }
+          });
+        }
+      });
     },
     hideWordD() {
       const getAvailable = new Promise(resolve => {
@@ -191,21 +213,45 @@ export default {
         });
         resolve(availablePlaces);
       });
-      getAvailable
-        .then(result => {
-          var startPos = result[Math.floor(Math.random() * result.length)];
-          var d = 0;
-          for (var i = 0; i < this.$store.state.word.length; i++) {
-            this.$store.state.gridObjects[
-              startPos + this.$store.state.columns * i + d
-            ].isRandom = false;
-            this.$store.state.gridObjects[
-              startPos + this.$store.state.columns * i + d
-            ].character = this.$store.state.word[i];
-            d++;
-          }
-        })
-        .catch(() => console.log("too long for this grid"));
+      getAvailable.then(result => {
+        var startPos = result[Math.floor(Math.random() * result.length)];
+        var d = 0;
+        for (var i = 0; i < this.$store.state.word.length; i++) {
+          const x = this.$store.state.gridObjects[
+            startPos + this.$store.state.columns * i + d
+          ].row;
+          const y = this.$store.state.gridObjects[
+            startPos + this.$store.state.columns * i + d
+          ].column;
+          const z = this.$store.state.gridObjects[
+            startPos + this.$store.state.columns * i + d
+          ].elementNumber;
+          this.$store.commit("replaceGridItem", {
+            index: startPos + this.$store.state.columns * i + d,
+            content: {
+              elementNumber: z,
+              elementId: x + "-" + y,
+              row: x,
+              column: y,
+              rnd:
+                Math.floor(100000 + Math.random() * 900000 + x * y) +
+                "-" +
+                x +
+                y,
+              isRandom: false,
+              character: this.$store.state.word[i],
+              classes: [
+                "character--delay" + Math.floor(Math.random() * 10),
+                this.elementSize,
+                "col-" + y,
+                "row-" + x,
+                "index-" + z
+              ]
+            }
+          });
+          d++;
+        }
+      });
     },
     setGridStyle() {
       this.gridStyle.width = this.size.width + "px";

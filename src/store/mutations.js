@@ -19,6 +19,9 @@ export default {
   createGrid(state, payload) {
     state.gridObjects.push(payload);
   },
+  replaceGridItem(state, payload) {
+    state.gridObjects.splice(payload.index, 1, payload.content);
+  },
   deleteGrid(state) {
     state.gridObjects = [];
   }
