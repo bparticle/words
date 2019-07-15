@@ -15,5 +15,11 @@ export default {
   },
   setWord(state, word) {
     state.word = word;
+  },
+  createGrid(state, payload) {
+    state.gridObjects.push(payload);
+  },
+  deleteGrid(state) {
+    state.gridObjects = [];
   }
 };
