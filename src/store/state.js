@@ -1,6 +1,7 @@
 export default {
   allCharacters: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
   gridObjects: [],
+  hiddenWords: [],
   word: "",
   elementSize: 35,
   viewportHeight: 0,

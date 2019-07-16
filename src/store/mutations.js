@@ -24,5 +24,11 @@ export default {
   },
   deleteGrid(state) {
     state.gridObjects = [];
+  },
+  addHiddenWord(state, word) {
+    state.hiddenWords.push({
+      index: state.hiddenWords.length + 1,
+      word: word
+    });
   }
 };

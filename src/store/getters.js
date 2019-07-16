@@ -10,5 +10,8 @@ export default {
   },
   getGridObjects: state => {
     return state.gridObjects;
+  },
+  getHiddenWords: state => {
+    return state.hiddenWords;
   }
 };

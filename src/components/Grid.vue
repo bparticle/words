@@ -1,25 +1,54 @@
 <template>
-  <div class="grid-wrapper">
+  <div class="grid">
     <input
+      class="grid__input grid__input--sizeW"
       @keyup.enter="setSize"
       type="text"
       name="width"
       v-model="size.width"
     />
     <input
+      class="grid__input grid__input--sizeH"
       @keyup.enter="setSize"
       type="text"
       name="height"
       v-model="size.height"
     />
-    <input @keyup.enter="hideWord" type="text" name="height" v-model="word" />
-    <button @click="setSize" type="button" name="button">SHUFFLE</button>
-    <button @click="deleteGrid" type="button" name="button">DELETE</button>
-    <div class="grid-wrapper__word">
-      {{ word }}
-    </div>
-    <div class="grid" :class="gridSize" :style="gridStyle" :key="gridKey">
-      <transition-group name="list-complete" tag="div" mode="out-in">
+    <input
+      @keyup.enter="hideWord()"
+      class="grid__input grid__input--word"
+      type="text"
+      name="height"
+      v-model="word"
+    />
+    <button
+      @click="setSize"
+      class="grid__button grid__button--set"
+      type="button"
+      name="button"
+    >
+      SHUFFLE
+    </button>
+    <button
+      @click="deleteGrid"
+      class="grid__button grid__button--clear"
+      type="button"
+      name="button"
+    >
+      DELETE
+    </button>
+    <transition-group name="list-complete" tag="p" class="grid__words">
+      <span
+        v-for="item in hiddenWords"
+        v-bind:key="item.index"
+        class="list-complete-item grid__word"
+      >
+        {{ item.word }}
+      </span>
+    </transition-group>
+    Elements Horizontal: {{ ElementsH }} | Elements Vertical: {{ ElementsV }}
+    <div class="grid__grid" :class="gridSize" :style="gridStyle" :key="gridKey">
+      <transition-group name="list-complete" tag="div">
         <Character
           v-for="gridObject in gridObjects"
           :key="gridObject.rnd"
@@ -46,17 +75,20 @@ export default {
   data() {
     return {
       gridStyle: {
-        width: 250,
-        height: 250
+        width: 500,
+        height: 500
       },
       size: {
-        width: 250,
-        height: 250
+        width: 500,
+        height: 500
       },
       gridKey: 0
     };
   },
   computed: {
+    hiddenWords() {
+      return this.$store.getters.getHiddenWords;
+    },
     gridObjects() {
       return this.$store.getters.getGridObjects;
     },
@@ -89,18 +121,24 @@ export default {
   },
   methods: {
     hideWord() {
-      const alg = [0, 1, 2];
-      switch (alg[Math.floor(Math.random() * alg.length)]) {
-        case 0:
-          this.hideWordH();
-          break;
-        case 1:
-          this.hideWordV();
-          break;
-        case 2:
-          this.hideWordD();
-          break;
-      }
+      // First check if the word has been entered in the grid
+      this.$store.dispatch("checkIfWordExists", this.word).then(exists => {
+        if (!exists) {
+          const alg = [0, 1, 2];
+          switch (alg[Math.floor(Math.random() * alg.length)]) {
+            case 0:
+              this.hideWordH();
+              break;
+            case 1:
+              this.hideWordV();
+              break;
+            case 2:
+              this.hideWordD();
+              break;
+          }
+          this.$store.commit("addHiddenWord", this.word);
+        }
+      });
     },
     hideWordH() {
       const getAvailable = new Promise(resolve => {
@@ -111,9 +149,9 @@ export default {
             this.$store.state.columns + 1 - this.$store.state.word.length
           ) {
             availablePlaces.push(this.$store.state.gridObjects.indexOf(item));
+            resolve(availablePlaces);
           }
         });
-        resolve(availablePlaces);
       });
       getAvailable.then(result => {
         var startPos = result[Math.floor(Math.random() * result.length)];
@@ -129,13 +167,11 @@ export default {
               row: x,
               column: y,
               rnd:
-                Math.floor(100000 + Math.random() * 900000 + x * y) +
-                "-" +
-                x +
-                y,
+                Math.floor(10000 + Math.random() * 90000 + x * y) + "-" + x + y,
               isRandom: false,
               character: this.$store.state.word[i],
               classes: [
+                "character--nonrnd",
                 "character--delay" + Math.floor(Math.random() * 10),
                 this.elementSize,
                 "col-" + y,
@@ -156,9 +192,9 @@ export default {
             this.$store.state.rows + 1 - this.$store.state.word.length
           ) {
             availablePlaces.push(this.$store.state.gridObjects.indexOf(item));
+            resolve(availablePlaces);
           }
         });
-        resolve(availablePlaces);
       });
       getAvailable.then(result => {
         var startPos = result[Math.floor(Math.random() * result.length)];
@@ -180,13 +216,11 @@ export default {
               row: x,
               column: y,
               rnd:
-                Math.floor(100000 + Math.random() * 900000 + x * y) +
-                "-" +
-                x +
-                y,
+                Math.floor(10000 + Math.random() * 90000 + x * y) + "-" + x + y,
               isRandom: false,
               character: this.$store.state.word[i],
               classes: [
+                "character--nonrnd",
                 "character--delay" + Math.floor(Math.random() * 10),
                 this.elementSize,
                 "col-" + y,
@@ -209,9 +243,9 @@ export default {
               this.$store.state.columns + 1 - this.$store.state.word.length
           ) {
             availablePlaces.push(this.$store.state.gridObjects.indexOf(item));
+            resolve(availablePlaces);
           }
         });
-        resolve(availablePlaces);
       });
       getAvailable.then(result => {
         var startPos = result[Math.floor(Math.random() * result.length)];
@@ -234,13 +268,11 @@ export default {
               row: x,
               column: y,
               rnd:
-                Math.floor(100000 + Math.random() * 900000 + x * y) +
-                "-" +
-                x +
-                y,
+                Math.floor(10000 + Math.random() * 90000 + x * y) + "-" + x + y,
               isRandom: false,
               character: this.$store.state.word[i],
               classes: [
+                "character--nonrnd",
                 "character--delay" + Math.floor(Math.random() * 10),
                 this.elementSize,
                 "col-" + y,
@@ -282,7 +314,7 @@ export default {
             elementId: i + "-" + j,
             row: i,
             rnd:
-              Math.floor(100000 + Math.random() * 900000 + i * j) + "-" + i + j,
+              Math.floor(10000 + Math.random() * 90000 + i * j) + "-" + i + j,
             column: j,
             isRandom: true,
             character: "",
@@ -306,18 +338,53 @@ export default {
 
 <style scoped lang="scss">
 .grid {
-  position: relative;
-  &-wrapper {
-    &__word {
-      margin: 20px;
-      font-family: paytone-one, sans-serif;
-      text-transform: uppercase;
-      font-size: 20px;
+  &__grid {
+    position: relative;
+    margin: 50px auto;
+    transition: all 0.5s;
+  }
+
+  &__words {
+    overflow: hidden;
+    margin: 15px auto;
+  }
+
+  &__word {
+    margin: 5px;
+    padding: 5px;
+    background-color: lightyellow;
+    min-width: 160px;
+    font-family: paytone-one, sans-serif;
+    text-transform: uppercase;
+    font-size: 15px;
+    float: left;
+    list-style-type: none;
+    transition: all 1s;
+    display: inline-block;
+    margin-right: 10px;
+  }
+
+  &__input {
+    width: 50px;
+    outline: 0;
+    border: 0;
+    padding: 10px 15px;
+    font-size: 20px;
+    margin: 15px 2px;
+    &--word {
+      display: inline-block;
+      min-width: 140px;
     }
   }
 
-  margin: 50px auto;
-  transition: all 0.5s;
+  &__button {
+    outline: 0;
+    border: 0;
+    padding: 10px 15px;
+    border-radius: 2px;
+    color: #fff;
+    margin: 0 5px;
+  }
 }
 
 .list-complete-enter,

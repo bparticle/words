@@ -8,6 +8,7 @@
 body {
   margin: 0;
   padding: 0;
+  background-color: #fffa99;
 }
 #app {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
@@ -15,7 +16,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 50px;
+  max-width: 600px;
+  margin: 50px auto;
 }
 #nav {
   padding: 30px;
