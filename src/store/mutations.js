@@ -22,6 +22,17 @@ export default {
   replaceGridItem(state, payload) {
     state.gridObjects.splice(payload.index, 1, payload.content);
   },
+  hideWord(state, payload) {
+    if (payload.type === "horizontal") {
+      for (var i = 0; i < state.word.length; i++) {
+        // const newCharacter = state.gridObjects.splice(
+        //   payload.content.elementNumber,
+        //   1,
+        //   payload.content
+        // );
+      }
+    }
+  },
   deleteGrid(state) {
     state.gridObjects = [];
   },

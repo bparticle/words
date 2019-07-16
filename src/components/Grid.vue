@@ -117,10 +117,72 @@ export default {
     },
     totalElements() {
       return this.$store.getters.totalElements;
+    },
+    binaryWord() {
+      return this.$store.getters.binaryWord;
     }
   },
   methods: {
+    getPlaces() {
+      return new Promise(resolve => {
+        // First check if the word has been entered in the grid
+        this.$store.dispatch("checkIfWordExists", this.word).then(exists => {
+          if (!exists) {
+            var possiblePlaces = [];
+            this.gridObjects.forEach(gridObject => {
+              // Horizontal check
+              if (
+                gridObject.column <
+                this.$store.state.columns + 1 - this.word.length
+              ) {
+                this.checkHorizontal(gridObject).then(result => {
+                  // if any of the characters returns 0 then reject
+                  if (
+                    result.some(b => {
+                      return b !== 0;
+                    })
+                  ) {
+                    possiblePlaces.push({
+                      type: "horizontal",
+                      content: gridObject
+                    });
+                  }
+                });
+              }
+            });
+            this.$store.commit("addHiddenWord", this.word);
+            resolve(possiblePlaces);
+          }
+        });
+      });
+    },
     hideWord() {
+      this.getPlaces().then(possiblePlaces => {
+        this.$store.commit(
+          "hideWord",
+          possiblePlaces[Math.floor(Math.random() * possiblePlaces.length)]
+        );
+      });
+    },
+    checkHorizontal(gridObject) {
+      var result = this.binaryWord.slice(0);
+      return new Promise(resolve => {
+        for (var i = 0; i < this.word.length; i++) {
+          if (this.gridObjects[gridObject.elementNumber + i].isRandom) {
+            result[i] = 1;
+          } else if (
+            this.gridObjects[gridObject.elementNumber + i].character ===
+            this.word[i]
+          ) {
+            result[i] = 1;
+          } else {
+            result[i] = 0;
+          }
+        }
+        resolve(result);
+      });
+    },
+    hideWord__legacy() {
       // First check if the word has been entered in the grid
       this.$store.dispatch("checkIfWordExists", this.word).then(exists => {
         if (!exists) {
@@ -308,7 +370,6 @@ export default {
       var count = 0;
       for (var i = 0; i < this.ElementsV; i++) {
         for (var j = 0; j < this.ElementsH; j++) {
-          count++;
           this.$store.commit("createGrid", {
             elementNumber: count,
             elementId: i + "-" + j,
@@ -326,6 +387,7 @@ export default {
               "index-" + count
             ]
           });
+          count++;
         }
       }
     }

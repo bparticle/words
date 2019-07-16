@@ -13,5 +13,12 @@ export default {
   },
   getHiddenWords: state => {
     return state.hiddenWords;
+  },
+  binaryWord: state => {
+    var b = [];
+    for (var i = 0; i < state.word.length; i++) {
+      b.push(1);
+    }
+    return b;
   }
 };
