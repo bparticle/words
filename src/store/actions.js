@@ -18,5 +18,36 @@ export default {
         })
       );
     });
+  },
+  hideWord({ state, commit }, payload) {
+    if (payload.type === "horizontal") {
+      for (var i = 0; i < state.word.length; i++) {
+        const x = state.gridObjects[payload.content.elementNumber + i].row;
+        const y = state.gridObjects[payload.content.elementNumber + i].column;
+        const z =
+          state.gridObjects[payload.content.elementNumber + i].elementNumber;
+        commit("replaceGridItem", {
+          index: payload.content.elementNumber + i,
+          content: {
+            elementNumber: z,
+            elementId: x + "-" + y,
+            row: x,
+            column: y,
+            rnd:
+              Math.floor(10000 + Math.random() * 90000 + x * y) + "-" + x + y,
+            isRandom: false,
+            character: state.word[i],
+            classes: [
+              "character--nonrnd",
+              "character--delay" + Math.floor(Math.random() * 10),
+              "character--" + state.elementSize,
+              "col-" + y,
+              "row-" + x,
+              "index-" + z
+            ]
+          }
+        });
+      }
+    }
   }
 };

@@ -75,12 +75,12 @@ export default {
   data() {
     return {
       gridStyle: {
-        width: 500,
-        height: 500
+        width: 200,
+        height: 200
       },
       size: {
-        width: 500,
-        height: 500
+        width: 200,
+        height: 200
       },
       gridKey: 0
     };
@@ -124,7 +124,7 @@ export default {
   },
   methods: {
     getPlaces() {
-      return new Promise(resolve => {
+      return new Promise((resolve, reject) => {
         // First check if the word has been entered in the grid
         this.$store.dispatch("checkIfWordExists", this.word).then(exists => {
           if (!exists) {
@@ -139,9 +139,11 @@ export default {
                   // if any of the characters returns 0 then reject
                   if (
                     result.some(b => {
-                      return b !== 0;
+                      return b === 0;
                     })
                   ) {
+                    reject("No horizontal places possible");
+                  } else {
                     possiblePlaces.push({
                       type: "horizontal",
                       content: gridObject
@@ -150,32 +152,39 @@ export default {
                 });
               }
             });
-            this.$store.commit("addHiddenWord", this.word);
             resolve(possiblePlaces);
           }
         });
       });
     },
     hideWord() {
-      this.getPlaces().then(possiblePlaces => {
-        this.$store.commit(
-          "hideWord",
-          possiblePlaces[Math.floor(Math.random() * possiblePlaces.length)]
-        );
-      });
+      this.getPlaces()
+        .then(possiblePlaces => {
+          this.$store.dispatch(
+            "hideWord",
+            possiblePlaces[Math.floor(Math.random() * possiblePlaces.length)]
+          );
+          this.$store.commit("addHiddenWord", this.word);
+        })
+        .catch(error => {
+          console.log(error);
+        });
     },
     checkHorizontal(gridObject) {
-      var result = this.binaryWord.slice(0);
+      var result = this.binaryWord.slice(0); // Prepare test result array
       return new Promise(resolve => {
         for (var i = 0; i < this.word.length; i++) {
           if (this.gridObjects[gridObject.elementNumber + i].isRandom) {
+            // Character is random - OK
             result[i] = 1;
           } else if (
             this.gridObjects[gridObject.elementNumber + i].character ===
             this.word[i]
           ) {
+            // Character is not random but same as requested - OK
             result[i] = 1;
           } else {
+            // Character is not random and different from requested - NOT OK
             result[i] = 0;
           }
         }
@@ -352,6 +361,7 @@ export default {
       this.gridStyle.height = this.size.height + "px";
     },
     setSize() {
+      this.$store.commit("clearWords");
       this.$store
         .dispatch("setViewport", {
           width: Math.max(this.size.width || 0),
