@@ -71,6 +71,7 @@ export default {
     &--#{$i} {
       width: #{$i}px;
       height: #{$i}px;
+      line-height: #{$i}px;
     }
   }
 
@@ -82,10 +83,10 @@ export default {
 
   &--nonrnd {
     cursor: pointer;
+    background-color: beige;
 
     &:hover {
       color: #fff;
-      background-color: beige;
     }
   }
 }

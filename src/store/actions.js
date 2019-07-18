@@ -48,6 +48,39 @@ export default {
           }
         });
       }
+    } else if (payload.type === "vertical") {
+      for (var j = 0; j < state.word.length; j++) {
+        const x =
+          state.gridObjects[payload.content.elementNumber + state.columns * j]
+            .row;
+        const y =
+          state.gridObjects[payload.content.elementNumber + state.columns * j]
+            .column;
+        const z =
+          state.gridObjects[payload.content.elementNumber + state.columns * j]
+            .elementNumber;
+        commit("replaceGridItem", {
+          index: payload.content.elementNumber + state.columns * j,
+          content: {
+            elementNumber: z,
+            elementId: x + "-" + y,
+            row: x,
+            column: y,
+            rnd:
+              Math.floor(10000 + Math.random() * 90000 + x * y) + "-" + x + y,
+            isRandom: false,
+            character: state.word[j],
+            classes: [
+              "character--nonrnd",
+              "character--delay" + Math.floor(Math.random() * 10),
+              "character--" + state.elementSize,
+              "col-" + y,
+              "row-" + x,
+              "index-" + z
+            ]
+          }
+        });
+      }
     }
   }
 };
