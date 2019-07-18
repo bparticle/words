@@ -75,12 +75,12 @@ export default {
   data() {
     return {
       gridStyle: {
-        width: 300,
-        height: 300
+        width: 550,
+        height: 550
       },
       size: {
-        width: 300,
-        height: 300
+        width: 550,
+        height: 550
       },
       gridKey: 0
     };
@@ -130,11 +130,11 @@ export default {
           if (!exists) {
             var possiblePlaces = [];
             this.gridObjects.forEach(gridObject => {
+              // Horizontal check
               if (
                 gridObject.column <
                 this.$store.state.columns + 1 - this.word.length
               ) {
-                // Horizontal check
                 this.checkHorizontal(gridObject).then(result => {
                   // if any of the characters returns 0 then reject
                   if (
@@ -151,11 +151,11 @@ export default {
                   }
                 });
               }
+              // Vertical check
               if (
                 gridObject.row <
                 this.$store.state.rows + 1 - this.$store.state.word.length
               ) {
-                // Vertical check
                 this.checkVertical(gridObject).then(result => {
                   // if any of the characters returns 0 then reject
                   if (
@@ -167,6 +167,29 @@ export default {
                   } else {
                     possiblePlaces.push({
                       type: "vertical",
+                      content: gridObject
+                    });
+                  }
+                });
+              }
+              // Diagonal check
+              if (
+                gridObject.row <
+                  this.$store.state.rows + 1 - this.$store.state.word.length &&
+                gridObject.column <
+                  this.$store.state.columns + 1 - this.$store.state.word.length
+              ) {
+                this.checkDiagonal(gridObject).then(result => {
+                  // if any of the characters returns 0 then reject
+                  if (
+                    result.some(b => {
+                      return b === 0;
+                    })
+                  ) {
+                    // TODO: catch empty possibility
+                  } else {
+                    possiblePlaces.push({
+                      type: "diagonal",
                       content: gridObject
                     });
                   }
@@ -187,7 +210,6 @@ export default {
             "hideWord",
             possiblePlaces[Math.floor(Math.random() * possiblePlaces.length)]
           );
-          this.$store.commit("addHiddenWord", this.word);
         })
         .catch(error => {
           console.log(error);
@@ -240,169 +262,32 @@ export default {
         resolve(result);
       });
     },
-    hideWord__legacy() {
-      // First check if the word has been entered in the grid
-      this.$store.dispatch("checkIfWordExists", this.word).then(exists => {
-        if (!exists) {
-          const alg = [0, 1, 2];
-          switch (alg[Math.floor(Math.random() * alg.length)]) {
-            case 0:
-              this.hideWordH();
-              break;
-            case 1:
-              this.hideWordV();
-              break;
-            case 2:
-              this.hideWordD();
-              break;
-          }
-          this.$store.commit("addHiddenWord", this.word);
-        }
-      });
-    },
-    hideWordH() {
-      const getAvailable = new Promise(resolve => {
-        var availablePlaces = [];
-        this.$store.state.gridObjects.forEach(item => {
-          if (
-            item.column <
-            this.$store.state.columns + 1 - this.$store.state.word.length
-          ) {
-            availablePlaces.push(this.$store.state.gridObjects.indexOf(item));
-            resolve(availablePlaces);
-          }
-        });
-      });
-      getAvailable.then(result => {
-        var startPos = result[Math.floor(Math.random() * result.length)];
-        for (var i = 0; i < this.$store.state.word.length; i++) {
-          const x = this.$store.state.gridObjects[startPos + i].row;
-          const y = this.$store.state.gridObjects[startPos + i].column;
-          const z = this.$store.state.gridObjects[startPos + i].elementNumber;
-          this.$store.commit("replaceGridItem", {
-            index: startPos + i,
-            content: {
-              elementNumber: z,
-              elementId: x + "-" + y,
-              row: x,
-              column: y,
-              rnd:
-                Math.floor(10000 + Math.random() * 90000 + x * y) + "-" + x + y,
-              isRandom: false,
-              character: this.$store.state.word[i],
-              classes: [
-                "character--nonrnd",
-                "character--delay" + Math.floor(Math.random() * 10),
-                this.elementSize,
-                "col-" + y,
-                "row-" + x,
-                "index-" + z
-              ]
-            }
-          });
-        }
-      });
-    },
-    hideWordV() {
-      const getAvailable = new Promise(resolve => {
-        var availablePlaces = [];
-        this.$store.state.gridObjects.forEach(item => {
-          if (
-            item.row <
-            this.$store.state.rows + 1 - this.$store.state.word.length
-          ) {
-            availablePlaces.push(this.$store.state.gridObjects.indexOf(item));
-            resolve(availablePlaces);
-          }
-        });
-      });
-      getAvailable.then(result => {
-        var startPos = result[Math.floor(Math.random() * result.length)];
-        for (var i = 0; i < this.$store.state.word.length; i++) {
-          const x = this.$store.state.gridObjects[
-            startPos + this.$store.state.columns * i
-          ].row;
-          const y = this.$store.state.gridObjects[
-            startPos + this.$store.state.columns * i
-          ].column;
-          const z = this.$store.state.gridObjects[
-            startPos + this.$store.state.columns * i
-          ].elementNumber;
-          this.$store.commit("replaceGridItem", {
-            index: startPos + this.$store.state.columns * i,
-            content: {
-              elementNumber: z,
-              elementId: x + "-" + y,
-              row: x,
-              column: y,
-              rnd:
-                Math.floor(10000 + Math.random() * 90000 + x * y) + "-" + x + y,
-              isRandom: false,
-              character: this.$store.state.word[i],
-              classes: [
-                "character--nonrnd",
-                "character--delay" + Math.floor(Math.random() * 10),
-                this.elementSize,
-                "col-" + y,
-                "row-" + x,
-                "index-" + z
-              ]
-            }
-          });
-        }
-      });
-    },
-    hideWordD() {
-      const getAvailable = new Promise(resolve => {
-        var availablePlaces = [];
-        this.$store.state.gridObjects.forEach(item => {
-          if (
-            item.row <
-              this.$store.state.rows + 1 - this.$store.state.word.length &&
-            item.column <
-              this.$store.state.columns + 1 - this.$store.state.word.length
-          ) {
-            availablePlaces.push(this.$store.state.gridObjects.indexOf(item));
-            resolve(availablePlaces);
-          }
-        });
-      });
-      getAvailable.then(result => {
-        var startPos = result[Math.floor(Math.random() * result.length)];
+    checkDiagonal(gridObject) {
+      var result = this.binaryWord.slice(0); // Prepare test result array
+      return new Promise(resolve => {
         var d = 0;
-        for (var i = 0; i < this.$store.state.word.length; i++) {
-          const x = this.$store.state.gridObjects[
-            startPos + this.$store.state.columns * i + d
-          ].row;
-          const y = this.$store.state.gridObjects[
-            startPos + this.$store.state.columns * i + d
-          ].column;
-          const z = this.$store.state.gridObjects[
-            startPos + this.$store.state.columns * i + d
-          ].elementNumber;
-          this.$store.commit("replaceGridItem", {
-            index: startPos + this.$store.state.columns * i + d,
-            content: {
-              elementNumber: z,
-              elementId: x + "-" + y,
-              row: x,
-              column: y,
-              rnd:
-                Math.floor(10000 + Math.random() * 90000 + x * y) + "-" + x + y,
-              isRandom: false,
-              character: this.$store.state.word[i],
-              classes: [
-                "character--nonrnd",
-                "character--delay" + Math.floor(Math.random() * 10),
-                this.elementSize,
-                "col-" + y,
-                "row-" + x,
-                "index-" + z
-              ]
-            }
-          });
+        for (var i = 0; i < this.word.length; i++) {
+          if (
+            this.gridObjects[
+              gridObject.elementNumber + this.$store.state.columns * i + d
+            ].isRandom
+          ) {
+            // Character is random - OK
+            result[i] = 1;
+          } else if (
+            this.gridObjects[
+              gridObject.elementNumber + this.$store.state.columns * i + d
+            ].character === this.word[i]
+          ) {
+            // Character is not random but same as requested - OK
+            result[i] = 1;
+          } else {
+            // Character is not random and different from requested - NOT OK
+            result[i] = 0;
+          }
           d++;
         }
+        resolve(result);
       });
     },
     setGridStyle() {
@@ -475,7 +360,6 @@ export default {
     padding: 5px;
     background-color: lightyellow;
     min-width: 160px;
-    font-family: paytone-one, sans-serif;
     text-transform: uppercase;
     font-size: 15px;
     float: left;

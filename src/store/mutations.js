@@ -33,5 +33,8 @@ export default {
       index: state.hiddenWords.length + 1,
       word: word
     });
+  },
+  emptyInput(state) {
+    state.word = "";
   }
 };

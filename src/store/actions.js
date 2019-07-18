@@ -81,6 +81,46 @@ export default {
           }
         });
       }
+    } else if (payload.type === "diagonal") {
+      var d = 0;
+      for (var k = 0; k < state.word.length; k++) {
+        const x =
+          state.gridObjects[
+            payload.content.elementNumber + state.columns * k + d
+          ].row;
+        const y =
+          state.gridObjects[
+            payload.content.elementNumber + state.columns * k + d
+          ].column;
+        const z =
+          state.gridObjects[
+            payload.content.elementNumber + state.columns * k + d
+          ].elementNumber;
+        commit("replaceGridItem", {
+          index: payload.content.elementNumber + state.columns * k + d,
+          content: {
+            elementNumber: z,
+            elementId: x + "-" + y,
+            row: x,
+            column: y,
+            rnd:
+              Math.floor(10000 + Math.random() * 90000 + x * y) + "-" + x + y,
+            isRandom: false,
+            character: state.word[k],
+            classes: [
+              "character--nonrnd",
+              "character--delay" + Math.floor(Math.random() * 10),
+              "character--" + state.elementSize,
+              "col-" + y,
+              "row-" + x,
+              "index-" + z
+            ]
+          }
+        });
+        d++;
+      }
     }
+    commit("addHiddenWord", state.word);
+    commit("emptyInput");
   }
 };

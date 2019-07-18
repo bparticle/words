@@ -61,7 +61,6 @@ export default {
 
 <style scoped lang="scss">
 .character {
-  font-family: paytone-one, sans-serif;
   text-transform: uppercase;
   position: absolute;
   transition: all 0.3s ease-out;
