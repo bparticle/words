@@ -1,24 +1,19 @@
 <template>
   <div class="home">
-    <Grid :size="size" />
+    <SideBar />
+    <Grid />
   </div>
 </template>
 
 <script>
 import Grid from "@/components/Grid.vue";
+import SideBar from "@/components/SideBar.vue";
 
 export default {
   name: "home",
   components: {
-    Grid
-  },
-  data() {
-    return {
-      size: {
-        width: 500,
-        height: 500
-      }
-    };
+    Grid,
+    SideBar
   }
 };
 </script>

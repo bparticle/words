@@ -81,11 +81,10 @@ export default {
   }
 
   &--nonrnd {
-    cursor: pointer;
-    background-color: beige;
+    // cursor: pointer;
 
     &:hover {
-      color: #fff;
+      background-color: beige;
     }
   }
 }

@@ -21,32 +21,32 @@
       name="height"
       v-model="word"
     />
-    <button
-      @click="setSize"
-      class="grid__button grid__button--set"
-      type="button"
-      name="button"
-    >
-      SHUFFLE
-    </button>
-    <button
-      @click="deleteGrid"
-      class="grid__button grid__button--clear"
-      type="button"
-      name="button"
-    >
-      DELETE
-    </button>
-    <transition-group name="list-complete" tag="p" class="grid__words">
-      <span
-        v-for="item in hiddenWords"
-        v-bind:key="item.index"
-        class="list-complete-item grid__word"
+    <div class="grid__buttons">
+      <button
+        @click="setSize"
+        class="grid__button grid__button--set"
+        type="button"
+        name="button"
       >
-        {{ item.word }}
-      </span>
-    </transition-group>
-    Elements Horizontal: {{ ElementsH }} | Elements Vertical: {{ ElementsV }}
+        SHUFFLE
+      </button>
+      <button
+        @click="pickWords"
+        class="grid__button grid__button--source"
+        type="button"
+        name="button"
+      >
+        PICK WORDS
+      </button>
+      <button
+        @click="deleteGrid"
+        class="grid__button grid__button--clear"
+        type="button"
+        name="button"
+      >
+        DELETE
+      </button>
+    </div>
     <div class="grid__grid" :class="gridSize" :style="gridStyle" :key="gridKey">
       <transition-group name="list-complete" tag="div">
         <Character
@@ -66,6 +66,7 @@
 
 <script>
 import Character from "@/components/Character.vue";
+import RandomWords from "@/words.json";
 
 export default {
   name: "Grid",
@@ -82,7 +83,8 @@ export default {
         width: 550,
         height: 550
       },
-      gridKey: 0
+      gridKey: 0,
+      rndAmount: 19
     };
   },
   computed: {
@@ -201,6 +203,40 @@ export default {
             reject("Word exists");
           }
         });
+      });
+    },
+    pickWords() {
+      this.fillBucket().then(result => {
+        var i = 1;
+        var vm = this;
+        function myLoop() {
+          //  create a loop function
+          setTimeout(function() {
+            //  call a 3s setTimeout when the loop is called
+            console.log(result[i]);
+            vm.$store.commit("setWord", result[i]);
+            vm.hideWord();
+            i++; //  increment the counter
+            if (i < result.length) {
+              //  if the counter < 10, call the loop function
+              myLoop(); //  ..  again which will trigger another
+            } //  ..  setTimeout()
+          }, 10);
+        }
+        myLoop();
+      });
+    },
+    fillBucket() {
+      return new Promise(resolve => {
+        var rndWords = [];
+        for (var i = 0; i < this.rndAmount; i++) {
+          rndWords.push(
+            RandomWords.words[
+              Math.floor(Math.random() * RandomWords.words.length)
+            ]
+          );
+        }
+        resolve(rndWords);
       });
     },
     hideWord() {
@@ -387,8 +423,12 @@ export default {
     border: 0;
     padding: 10px 15px;
     border-radius: 2px;
-    color: #fff;
     margin: 0 5px;
+    transition: all 0.3s;
+
+    &:hover {
+      background-color: darkgray;
+    }
   }
 }
 
