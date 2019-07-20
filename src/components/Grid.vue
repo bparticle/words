@@ -210,17 +210,14 @@ export default {
         var i = 1;
         var vm = this;
         function myLoop() {
-          //  create a loop function
           setTimeout(function() {
-            //  call a 3s setTimeout when the loop is called
             console.log(result[i]);
             vm.$store.commit("setWord", result[i]);
             vm.hideWord();
-            i++; //  increment the counter
+            i++;
             if (i < result.length) {
-              //  if the counter < 10, call the loop function
-              myLoop(); //  ..  again which will trigger another
-            } //  ..  setTimeout()
+              myLoop();
+            }
           }, 10);
         }
         myLoop();
