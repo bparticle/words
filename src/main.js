@@ -4,7 +4,12 @@ import router from "./router";
 import store from "./store";
 import "./registerServiceWorker";
 
+import VueSVGIcon from "vue-svgicon";
+
 Vue.config.productionTip = false;
+Vue.use(VueSVGIcon, {
+  isStroke: true
+});
 
 new Vue({
   router,

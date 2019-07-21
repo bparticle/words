@@ -79,13 +79,5 @@ export default {
       transition-delay: #{$i / 20}s;
     }
   }
-
-  &--nonrnd {
-    // cursor: pointer;
-
-    &:hover {
-      background-color: beige;
-    }
-  }
 }
 </style>

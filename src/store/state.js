@@ -7,5 +7,6 @@ export default {
   viewportHeight: 0,
   viewportWidth: 0,
   columns: 0,
-  rows: 0
+  rows: 0,
+  menuActive: false
 };

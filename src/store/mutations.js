@@ -28,6 +28,11 @@ export default {
   clearWords(state) {
     state.hiddenWords = [];
   },
+  sortWords(state) {
+    state.hiddenWords.sort((a, b) => {
+      return a.word > b.word ? 1 : b.word > a.word ? -1 : 0;
+    });
+  },
   addHiddenWord(state, word) {
     state.hiddenWords.push({
       index: state.hiddenWords.length + 1,
@@ -36,5 +41,13 @@ export default {
   },
   emptyInput(state) {
     state.word = "";
+  },
+  toggleMenu(state) {
+    state.menuActive == true
+      ? (state.menuActive = false)
+      : (state.menuActive = true);
+  },
+  closeMenu(state) {
+    state.menuActive = false;
   }
 };

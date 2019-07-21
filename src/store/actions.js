@@ -122,5 +122,6 @@ export default {
     }
     commit("addHiddenWord", state.word);
     commit("emptyInput");
+    commit("sortWords");
   }
 };

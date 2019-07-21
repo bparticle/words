@@ -36,7 +36,7 @@
         type="button"
         name="button"
       >
-        PICK WORDS
+        RANDOM WORDS
       </button>
       <button
         @click="deleteGrid"
@@ -84,7 +84,7 @@ export default {
         height: 550
       },
       gridKey: 0,
-      rndAmount: 19
+      rndAmount: 40
     };
   },
   computed: {
@@ -211,14 +211,13 @@ export default {
         var vm = this;
         function myLoop() {
           setTimeout(function() {
-            console.log(result[i]);
             vm.$store.commit("setWord", result[i]);
             vm.hideWord();
             i++;
             if (i < result.length) {
               myLoop();
             }
-          }, 10);
+          }, 5);
         }
         myLoop();
       });
@@ -340,6 +339,7 @@ export default {
     },
     deleteGrid() {
       this.$store.commit("deleteGrid");
+      this.$store.commit("clearWords");
     },
     makeGrid() {
       this.$store.commit("deleteGrid");
@@ -381,25 +381,6 @@ export default {
     position: relative;
     margin: 50px auto;
     transition: all 0.5s;
-  }
-
-  &__words {
-    overflow: hidden;
-    margin: 15px auto;
-  }
-
-  &__word {
-    margin: 5px;
-    padding: 5px;
-    background-color: lightyellow;
-    min-width: 160px;
-    text-transform: uppercase;
-    font-size: 15px;
-    float: left;
-    list-style-type: none;
-    transition: all 1s;
-    display: inline-block;
-    margin-right: 10px;
   }
 
   &__input {
