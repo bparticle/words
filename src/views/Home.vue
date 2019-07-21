@@ -34,6 +34,11 @@ export default {
     Grid,
     SideBar
   },
+  computed: {
+    wordsCounter() {
+      return this.$store.getters.wordsCounter;
+    }
+  },
   methods: {
     toggleMenu() {
       this.$store.commit("toggleMenu");
@@ -41,5 +46,3 @@ export default {
   }
 };
 </script>
-
-<style scoped lang="scss"></style>

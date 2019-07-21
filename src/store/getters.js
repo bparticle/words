@@ -20,5 +20,8 @@ export default {
       b.push(1);
     }
     return b;
+  },
+  wordsCounter: state => {
+    return state.hiddenWords.length;
   }
 };

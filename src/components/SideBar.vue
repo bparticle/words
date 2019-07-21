@@ -1,5 +1,8 @@
 <template>
   <div class="side-bar" :class="{ 'side-bar--active': menuActive }">
+    <div @click="toggleMenu" class="words-counter">
+      {{ wordsCounter }}
+    </div>
     <h3>Hidden words</h3>
     <transition-group name="list-complete" tag="p" class="words">
       <span
@@ -23,6 +26,14 @@ export default {
     },
     hiddenWords() {
       return this.$store.getters.getHiddenWords;
+    },
+    wordsCounter() {
+      return this.$store.getters.wordsCounter;
+    }
+  },
+  methods: {
+    toggleMenu() {
+      this.$store.commit("toggleMenu");
     }
   }
 };
@@ -38,14 +49,14 @@ export default {
   position: absolute;
   padding-right: 50px;
   left: 0;
-  width: 350px;
+  width: 450px;
   min-height: 100%;
   background-color: $color-gray-dd;
   z-index: 10;
   transition-property: all;
   transition-duration: 0.5s;
   transition: all 0.35s ease-out; // custom easing
-  transform: translateX(-410px);
+  transform: translateX(-510px);
   top: 0;
   box-shadow: 1px 0 6px rgba(0, 0, 0, 0.5);
 
@@ -56,7 +67,6 @@ export default {
 
   &--active {
     transform: translateX(0);
-    padding-right: 0;
   }
 
   &__close {
@@ -94,5 +104,19 @@ export default {
       box-shadow: inset 1px 1px 2px;
     }
   }
+}
+
+.words-counter {
+  position: absolute;
+  right: -51px;
+  background-color: #ccc;
+  text-align: center;
+  width: 21px;
+  padding: 15px;
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 15px;
+  font-size: 20px;
+  box-shadow: 2px 0 2px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
 }
 </style>

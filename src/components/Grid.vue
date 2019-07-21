@@ -38,14 +38,6 @@
       >
         RANDOM WORDS
       </button>
-      <button
-        @click="deleteGrid"
-        class="grid__button grid__button--clear"
-        type="button"
-        name="button"
-      >
-        DELETE
-      </button>
     </div>
     <div class="grid__grid" :class="gridSize" :style="gridStyle" :key="gridKey">
       <transition-group name="list-complete" tag="div">
